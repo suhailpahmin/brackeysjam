@@ -42,6 +42,10 @@ var DIRECTION = {
 @onready var sprite = $AnimatedSprite2D
 @onready var animationPlayer: AnimationPlayer = $AnimationPlayer
 
+# Sounds
+@onready var jumpSound: AudioStreamPlayer2D = $JumpSound
+@onready var wallSlidingSound: AudioStreamPlayer2D = $WallSlidingSound
+
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
@@ -87,36 +91,42 @@ func _physics_process(delta: float) -> void:
 		
 	move_and_slide()
 	
-	update_animations(direction)
+	update_states(direction)
 	
-func update_animations(direction):
+func update_states(direction):
 	# Default Animation
 	var animation = "idle"
 	
 	if is_on_floor():
-		# TODO Add Run Animation
-		pass
+		if direction != 0:
+			animation = "run"
 	else:
 		if velocity.y < 0:
 			animation = "jump"
 		elif velocity.y == jumpHeight:
-			animation = "jump_peak"
+			animation = "peak_jump"
 		elif velocity.y > 0:
 			animation = "fall"
 			
 	animation += DIRECTION[FACING_DIRECTION]
 	
-	if is_on_wall() and !animationPlayer.current_animation.contains("wall_slide"):
+	if is_on_wall() and isWallSliding:
+		# This stops the animator from playing other animation during wall slide 
+		# and keep replaying the wallslide animation
+		return
+	
+	if is_on_wall() and !isWallSliding:
 		if direction < 0:
 			animation = "wall_slide_left"
+			isWallSliding = true
 			animationPlayer.play(animation)
 		else:
 			animation = "wall_slide_right"
+			isWallSliding = true
 			animationPlayer.play(animation)
-	elif is_on_wall() and animationPlayer.current_animation.contains("wall_slide"):
-		return
 	else:
 		animationPlayer.play(animation)
+		isWallSliding = false
 	
 # Returns jump gravity or fall gravity
 func getGravity() -> float:
@@ -127,3 +137,9 @@ func on_jump_buffer_timeout() -> void:
 	
 func jump():
 	velocity.y = jumpVelocity
+
+func _on_animation_player_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "wall_slide_left":
+		animationPlayer.play("wall_sliding_left")
+	elif anim_name == "wall_slide_right":
+		animationPlayer.play("wall_sliding_right")
