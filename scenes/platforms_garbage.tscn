@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://bovgi8mftnrum"]
+
+[ext_resource type="Script" path="res://scripts/platforms_garbage.gd" id="1_pb5m2"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_l8bnj"]
+
+[node name="PlatformsGarbage" type="Area2D"]
+position = Vector2(0, -147)
+rotation = -3.14159
+collision_layer = 16
+collision_mask = 2
+script = ExtResource("1_pb5m2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-4.28372e-06, -49)
+shape = SubResource("WorldBoundaryShape2D_l8bnj")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

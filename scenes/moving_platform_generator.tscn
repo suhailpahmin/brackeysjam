@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://vsvgdhees6se"]
+
+[ext_resource type="Script" path="res://scripts/moving_platform_generator.gd" id="1_jx8ih"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_10hkv"]
+size = Vector2(340, 20)
+
+[node name="MovingPlatformGenerator" type="Node2D"]
+script = ExtResource("1_jx8ih")
+
+[node name="GenerationTimer" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[node name="SpawnArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SpawnArea"]
+shape = SubResource("RectangleShape2D_10hkv")
+
+[connection signal="timeout" from="GenerationTimer" to="." method="_on_generation_timer_timeout"]

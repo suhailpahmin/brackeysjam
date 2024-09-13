@@ -4,24 +4,23 @@ var blocks = [
 	preload("res://scenes/blocks/block_a.tscn")
 ]
 
-@export var moveDistance = 100.0
-@export var minBlockAmount = 1
-@export var maxBlockAmount = 3
+@export var moveDistance = 500.0
+@export var minBlockAmount = 2
+@export var maxBlockAmount = 5
 
-@onready var spawnCollision: CollisionShape2D = $PlayerDetector/CollisionShape2D
+@onready var player: CharacterBody2D = %Player
+@onready var spawnCollision: CollisionShape2D = $SpawnArea/CollisionShape2D
 @onready var spawnArea: Area2D = $SpawnArea
-		
-func _physics_process(delta: float) -> void:
-	# Generate blocks if no blocks in spawn area
-	if spawnArea.get_overlapping_bodies().is_empty():
-		generateBlocks()
 
-func _on_visible_on_screen_notifier_2d_screen_entered() -> void:
-	position.y += 100.0
+func _ready() -> void:
 	generateBlocks()
 	
+func _physics_process(_delta: float) -> void:
+	position.y = player.position.y + moveDistance
+
 func generateBlocks():
-	var screenWidth = get_viewport_rect().size.x
+	var spawnShape = spawnCollision.shape as RectangleShape2D
+	var screenWidth = spawnShape.extents.x * 0.915
 	var blocksToGenerate = randf_range(minBlockAmount, maxBlockAmount) # Generate random blocks amount
 	
 	for block in range(blocksToGenerate):
@@ -34,4 +33,7 @@ func generateBlocks():
 		instance.position = Vector2(randomX, randomY)
 		
 		# Add block to parent
-		get_parent().add_child(instance)
+		get_parent().add_child.call_deferred(instance)
+
+func _on_generation_timer_timeout() -> void:
+	generateBlocks()

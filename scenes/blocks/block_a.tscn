@@ -83,6 +83,7 @@ texture = ExtResource("1_cnpix")
 
 [sub_resource type="TileSet" id="TileSet_coh1p"]
 physics_layer_0/collision_layer = 2
+physics_layer_0/collision_mask = 17
 sources/0 = SubResource("TileSetAtlasSource_sumov")
 pattern_0 = SubResource("TileMapPattern_dx50h")
 
@@ -90,11 +91,6 @@ pattern_0 = SubResource("TileMapPattern_dx50h")
 script = ExtResource("1_a1cwb")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAD8////AAAAAAAAAAD8/wAAAAAAAAEAAAD9////AAABAAAAAAD9/wAAAAABAAEAAAD+////AAAAAAAAAAD+/wAAAAAAAAEAAAD/////AAABAAAAAAD//wAAAAABAAEAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAEAAAABAP//AAABAAAAAAABAAAAAAABAAEAAAACAP//AAAAAAAAAAACAAAAAAAAAAEAAAADAP//AAABAAAAAAADAAAAAAABAAEAAAA=")
+rotation = 1.5708
+tile_map_data = PackedByteArray("AAD8////AAAAAAQAAAD8/wAAAAAAAAUAAAD9////AAABAAQAAAD9/wAAAAABAAUAAAD+////AAAAAAQAAAD+/wAAAAAAAAUAAAD/////AAABAAQAAAD//wAAAAABAAUAAAAAAP//AAAAAAQAAAAAAAAAAAAAAAUAAAABAP//AAABAAQAAAABAAAAAAABAAUAAAACAP//AAAAAAQAAAACAAAAAAAAAAUAAAADAP//AAABAAQAAAADAAAAAAABAAUAAAA=")
 tile_set = SubResource("TileSet_coh1p")
-
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-position = Vector2(-4.35114e-06, -0.5)
-scale = Vector2(6.4, 1.55)
-
-[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]

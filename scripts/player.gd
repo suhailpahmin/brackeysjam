@@ -62,7 +62,7 @@ func _physics_process(delta: float) -> void:
 
 	# Handle jump.
 	if Input.is_action_just_pressed("jump"):
-		if ((is_on_floor() or !coyoteTimer.is_stopped()) or jumpCount < MAX_JUMP):
+		if ((is_on_floor() or !coyoteTimer.is_stopped()) and jumpCount < MAX_JUMP):
 			jump()
 		else:
 			# Trigger jump buffer
@@ -136,6 +136,7 @@ func on_jump_buffer_timeout() -> void:
 	jumpBuffer = false
 	
 func jump():
+	jumpCount += 1
 	velocity.y = jumpVelocity
 
 func _on_animation_player_animation_finished(anim_name: StringName) -> void:
