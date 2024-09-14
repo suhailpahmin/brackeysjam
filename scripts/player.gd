@@ -15,6 +15,16 @@ extends CharacterBody2D
 @export var wallJumpPower: float = 300.0
 @export var wallSlideFriction: float = 0.6
 
+# Dash Mechanics
+@export_category("Dash")
+@export var dashSpeed: float = 300.0
+@export var dashDuration: float = 0.2
+@export var dashCooldown: float = 0.5
+var isDashing: bool = false
+var dashDirection: Vector2 = Vector2.ZERO
+var dashTimer: float = 0.0
+var canDash: bool = true
+
 var jumpBuffer = false
 var jumpCount = 0
 
@@ -53,12 +63,21 @@ func _physics_process(delta: float) -> void:
 	# Sets gravity
 	velocity.y += getGravity() * delta
 	
+	# Handle dash
+	if isDashing:
+		dashMovement(delta)
+		return
+	
 	# Reset Double Jump
 	if is_on_floor() and jumpCount != 0:
 		jumpCount = 0
 		if jumpBuffer:
 			jump()
 			jumpBuffer = false
+			
+	# Handle Dash Input
+	if canDash and Input.is_action_just_pressed("dash"):
+		startDash()
 
 	# Handle jump.
 	if Input.is_action_just_pressed("jump"):
@@ -107,9 +126,9 @@ func update_states(direction):
 			animation = "peak_jump"
 		elif velocity.y > 0:
 			animation = "fall"
-			
+
 	animation += DIRECTION[FACING_DIRECTION]
-	
+
 	if is_on_wall() and isWallSliding:
 		# This stops the animator from playing other animation during wall slide 
 		# and keep replaying the wallslide animation
@@ -127,7 +146,25 @@ func update_states(direction):
 	else:
 		animationPlayer.play(animation)
 		isWallSliding = false
+		
+func startDash() -> void:
+	isDashing = true
+	dashTimer = dashDuration
+	dashDirection = Vector2(-1 if FACING_DIRECTION == Direction.LEFT else 1, 0)
+	canDash = false
 	
+	# Start cooldown timer
+	get_tree().create_timer(dashCooldown).timeout.connect(_on_dash_cooldown)
+	
+func dashMovement(delta: float) -> void:
+	dashTimer -= delta
+	if dashTimer <= 0.0:
+		isDashing = false
+		velocity = Vector2.ZERO
+	else:
+		velocity = dashDirection * dashSpeed
+		move_and_slide()
+		
 # Returns jump gravity or fall gravity
 func getGravity() -> float:
 	return jumpGravity if velocity.y < 0.0 else fallGravity
@@ -144,3 +181,9 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		animationPlayer.play("wall_sliding_left")
 	elif anim_name == "wall_slide_right":
 		animationPlayer.play("wall_sliding_right")
+
+func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
+	print("DIED")
+	
+func _on_dash_cooldown() -> void:
+	canDash = true
