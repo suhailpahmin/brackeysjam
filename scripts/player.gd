@@ -183,7 +183,8 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		animationPlayer.play("wall_sliding_right")
 
 func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
-	print("DIED")
+	get_tree().reload_current_scene()
+	# TODO: Implement Game over menu
 	
 func _on_dash_cooldown() -> void:
 	canDash = true
