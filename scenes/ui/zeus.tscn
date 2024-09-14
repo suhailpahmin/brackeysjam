@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://clbc4n00srrd6"]
+
+[ext_resource type="Script" path="res://scripts/zeus_ui.gd" id="1_c0u8c"]
+[ext_resource type="Texture2D" uid="uid://c7k6fo5ybqq25" path="res://assets/zeus/calm_border.png" id="1_emdc6"]
+[ext_resource type="Texture2D" uid="uid://ble7f0ay6x2f2" path="res://assets/zeus/calm_zeus.png" id="1_rkdoy"]
+[ext_resource type="Texture2D" uid="uid://bpacc8244m2ch" path="res://assets/zeus/calm_background.png" id="1_wvccg"]
+
+[node name="Zeus" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_c0u8c")
+
+[node name="BG" type="NinePatchRect" parent="."]
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 221.0
+texture = ExtResource("1_wvccg")
+
+[node name="Portrait" type="NinePatchRect" parent="."]
+layout_mode = 0
+offset_top = -1.0
+offset_right = 720.0
+offset_bottom = 220.0
+texture = ExtResource("1_rkdoy")
+
+[node name="Border" type="NinePatchRect" parent="."]
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 221.0
+texture = ExtResource("1_emdc6")

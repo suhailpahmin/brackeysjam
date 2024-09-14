@@ -1,7 +1,10 @@
 extends Node2D
 
-var blocks = [
-	preload("res://scenes/blocks/block_a.tscn")
+var normalBlock = preload("res://scenes/blocks/block_a.tscn")
+
+var angryBlocks = [
+	preload("res://scenes/blocks/block_a.tscn"),
+	preload("res://scenes/blocks/lightning_block.tscn")
 ]
 
 @export var moveDistance: float = 500.0
@@ -35,7 +38,7 @@ func generateBlocks():
 		var randomY: float = position.y + (block * 100) # Spacing for each block
 		
 		# Instantiate block
-		var instance = blocks[randi() % blocks.size()].instantiate()
+		var instance =  angryBlocks[randi() % angryBlocks.size()].instantiate() if Global.isAngry else  normalBlock.instantiate()
 		instance.position = Vector2(randomX, randomY)
 		
 		# Add block to parent

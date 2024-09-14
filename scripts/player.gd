@@ -42,6 +42,8 @@ var DIRECTION = {
 	Direction.RIGHT: "_right"
 }
 
+const GAME_OVER = preload("res://scenes/game_over.tscn")
+
 # For 2D, the gravity (down) is positive, the jump velocity (up) is negative. So we multiply it to -1
 @onready var jumpVelocity: float = ((2.0 * jumpHeight) / jumpTimeToPeak) * -1.0
 @onready var jumpGravity: float = ((-2.0 * jumpHeight) / (jumpTimeToPeak * jumpTimeToPeak)) * -1.0
@@ -51,6 +53,7 @@ var DIRECTION = {
 @onready var coyoteTimer = $Coyote
 @onready var sprite = $AnimatedSprite2D
 @onready var animationPlayer: AnimationPlayer = $AnimationPlayer
+@onready var hitbox: Area2D = $Hitbox
 
 # Sounds
 @onready var jumpSound: AudioStreamPlayer2D = $JumpSound
@@ -59,7 +62,15 @@ var DIRECTION = {
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
+func _ready() -> void:
+	Global.isDead = false
+
 func _physics_process(delta: float) -> void:
+	
+	# Stops everything if dead
+	if Global.isDead:
+		return
+		
 	# Sets gravity
 	velocity.y += getGravity() * delta
 	
@@ -67,9 +78,13 @@ func _physics_process(delta: float) -> void:
 	if isDashing:
 		dashMovement(delta)
 		return
+		
+	# Reset double jump on wall slide
+	if is_on_wall() and jumpCount != 0:
+		jumpCount = 0
 	
 	# Reset Double Jump
-	if is_on_floor() and jumpCount != 0:
+	if is_on_floor() or is_on_wall() and jumpCount != 0:
 		jumpCount = 0
 		if jumpBuffer:
 			jump()
@@ -183,8 +198,16 @@ func _on_animation_player_animation_finished(anim_name: StringName) -> void:
 		animationPlayer.play("wall_sliding_right")
 
 func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
-	get_tree().reload_current_scene()
-	# TODO: Implement Game over menu
+		died()
 	
 func _on_dash_cooldown() -> void:
 	canDash = true
+
+func _on_hitbox_area_entered(area: Area2D) -> void:
+	if area.name == "LightningBox":
+		died()
+		
+func died():
+	Global.isAngry = false
+	Global.isDead = true
+	GameOver.display()

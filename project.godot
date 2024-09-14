@@ -11,13 +11,15 @@ config_version=5
 [application]
 
 config/name="BrackeysJam"
-run/main_scene="res://scenes/game.tscn"
+run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Global="*res://scripts/global.gd"
+TransitionScreen="*res://scenes/global/transition_screen.tscn"
+GameOver="*res://scenes/game_over.tscn"
 
 [display]
 
@@ -59,6 +61,7 @@ dash={
 2d_physics/layer_4="Props"
 2d_physics/layer_5="Destroy"
 2d_physics/layer_6="Spawner"
+2d_physics/layer_7="LightningBlock"
 
 [rendering]
 

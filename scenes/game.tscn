@@ -1,12 +1,14 @@
-[gd_scene load_steps=17 format=4 uid="uid://bvxwedu8woil"]
+[gd_scene load_steps=19 format=4 uid="uid://bvxwedu8woil"]
 
 [ext_resource type="PackedScene" uid="uid://vsvgdhees6se" path="res://scenes/moving_platform_generator.tscn" id="1_53v20"]
 [ext_resource type="PackedScene" uid="uid://dobu63j163ox6" path="res://scenes/player.tscn" id="1_aaxdv"]
 [ext_resource type="PackedScene" uid="uid://cp24hkn6dug6m" path="res://scenes/pillar_generator.tscn" id="1_jwqlg"]
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_qh83s"]
+[ext_resource type="PackedScene" uid="uid://dgxtas7pk6uqj" path="res://scenes/ui/game_ui.tscn" id="2_r1n3p"]
 [ext_resource type="Texture2D" uid="uid://cnr1pb0e5t5og" path="res://assets/tilesets/tiles.png" id="4_vuipt"]
+[ext_resource type="AudioStream" uid="uid://byxekwkjxuq0i" path="res://assets/music/greek.wav" id="5_eodsn"]
 [ext_resource type="PackedScene" uid="uid://bovgi8mftnrum" path="res://scenes/platforms_garbage.tscn" id="5_i5dhh"]
-[ext_resource type="AudioStream" uid="uid://b3v5isslvsfj4" path="res://assets/music/greek.mp3" id="5_nhhwu"]
+[ext_resource type="Script" path="res://scripts/player_camera.gd" id="8_al8k8"]
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_avmsf"]
 tile_data = PackedInt32Array(0, 1, 4, 65536, 1, 5, 1, 65537, 4, 65537, 65537, 5)
@@ -156,30 +158,16 @@ pattern_5 = SubResource("TileMapPattern_4s5v5")
 distance = -62.0
 
 [node name="Game" type="Node2D"]
+position = Vector2(370, 322)
 script = ExtResource("1_qh83s")
+
+[node name="GameUI" parent="." instance=ExtResource("2_r1n3p")]
 
 [node name="PillarGenerator" parent="." instance=ExtResource("1_jwqlg")]
 position = Vector2(2, 477)
 
 [node name="MovingPlatformGenerator" parent="." instance=ExtResource("1_53v20")]
 position = Vector2(0, 322)
-
-[node name="Player" parent="." instance=ExtResource("1_aaxdv")]
-unique_name_in_owner = true
-position = Vector2(-78, -9)
-collision_mask = 10
-
-[node name="Camera2D" type="Camera2D" parent="Player"]
-position = Vector2(1, -2)
-zoom = Vector2(3, 3)
-limit_left = -200
-limit_right = 200
-position_smoothing_enabled = true
-position_smoothing_speed = 3.0
-
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Player"]
-stream = ExtResource("5_nhhwu")
-autoplay = true
 
 [node name="Tilemap" type="TileMapLayer" parent="."]
 position = Vector2(2, -1)
@@ -199,5 +187,29 @@ autostart = true
 position = Vector2(0, 4)
 shape = SubResource("WorldBoundaryShape2D_p3u6y")
 
+[node name="Player" parent="." instance=ExtResource("1_aaxdv")]
+unique_name_in_owner = true
+position = Vector2(-78, -9)
+collision_mask = 10
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position = Vector2(1, -2)
+zoom = Vector2(2, 2)
+limit_left = 300
+limit_right = 545
+position_smoothing_enabled = true
+position_smoothing_speed = 3.0
+script = ExtResource("8_al8k8")
+
+[node name="GreekMusic" type="AudioStreamPlayer2D" parent="Player"]
+stream = ExtResource("5_eodsn")
+autoplay = true
+
+[node name="MoodTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[connection signal="shakeCamera" from="." to="Player/Camera2D" method="_on_game_shake_camera"]
 [connection signal="timeout" from="SpeedTimer" to="." method="_on_speed_timer_timeout"]
 [connection signal="body_entered" from="GameStartPoint" to="." method="_on_game_start_point_body_entered"]
+[connection signal="timeout" from="MoodTimer" to="." method="_on_mood_timer_timeout"]
