@@ -3,9 +3,9 @@ extends CanvasLayer
 const GAME = preload("res://scenes/game.tscn")
 const MAIN_MENU = preload("res://scenes/main_menu.tscn")
 
-@onready var score_value: Label = $VBoxContainer/ScoreBox/ScoreValue
-@onready var gameOverPanel: VBoxContainer = $VBoxContainer
-@onready var highscore_value: Label = $VBoxContainer/HighScoreBox/HighscoreValue
+@onready var score_value: Label = $Panel/VBoxContainer/ScoreBox/ScoreValue
+@onready var gameOverPanel: VBoxContainer = $Panel/VBoxContainer
+@onready var highscore_value: Label = $Panel/VBoxContainer/HighScoreBox/HighscoreValue
 @onready var click_sound: AudioStreamPlayer2D = $ClickSound
 
 func _ready():
@@ -37,5 +37,4 @@ func updateScore():
 	Global.score = 0
 
 func _on_main_menu_pressed() -> void:
-	click_sound.play()
 	change_scene(MAIN_MENU)
